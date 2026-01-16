@@ -1,0 +1,23 @@
+AutoStream is a SaaS platform for automated video editing.
+
+AutoStream Features:
+- Automatic video trimming
+- AI-based highlights detection
+- Auto captions
+- Multi-platform export
+
+Pricing Plans:
+Free Plan:
+- Limited exports
+- Watermark added
+
+Pro Plan:
+- Unlimited exports
+- No watermark
+- Advanced AI editing tools
+- Price: $29/month
+
+Enterprise Plan:
+- Custom workflows
+- API access
+- Dedicated support
