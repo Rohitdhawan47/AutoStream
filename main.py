@@ -1,21 +1,17 @@
-from debug import trace_node
 from graph import build_graph
 from session import SessionUser
 from state import Agentstate
 from langchain_core.messages import HumanMessage
 from nodes.greeting import greetingnode
-
-
+from debug import dump_messages
 
 def main():
-
     session_user = SessionUser()
-
 
     state: Agentstate = {
         "messages": [],
         "trace": [],
-        "replied": False
+        "session_user": session_user
 
     }
 
@@ -31,13 +27,12 @@ def main():
         if user_input.lower() in ["exit", "quit"]:
             print("Session ended.")
             break
-        state["replied"] = False
         state["trace"].clear()
 
         state["messages"].append(HumanMessage(content=user_input))
 
         state = graph.invoke(state)
-        print("TRACE:", "->".join(state["trace"]))
+        print("TRACE:", "->".join(state.get("trace", [])))
 
         last_message = state["messages"][-1]
         print(f"Agent: {last_message.content}\n")

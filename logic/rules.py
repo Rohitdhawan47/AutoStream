@@ -1,34 +1,31 @@
-import re
-def extract_name(text:str):
+def detect_intent(text: str):
     text = text.lower()
 
-    if "my name is" in text:
-        return text.split("my name is")[-1].strip().split()[0]
-    
-    if text.startswith("i am"):
-        return text.split("i am")[-1].strip().split()[0]
-    
-    return None
-
-def detect_intent(text:str):
-    text = text.lower()
-
-    high_intent_keywords = [
-        "i want to try",
-        "sign me up",
-        "get started",
-        "subscribe",
-        "pro plan",
-        "buy",
-        "trial"
+    pricing = [
+        "price", "pricing", "plans", "subscription", "cost", "upgrade"
     ]
 
-    for keyword in high_intent_keywords:
-        if keyword in text:
-            return "high_intent"
-        
-    return "info"
-def is_product_question(text: str) -> bool:
+    lead = [
+        "buy", "trial", "sign up", "signup", "contact sales", "purchase", "interested"
+    ]
+
+    info = [
+        "what is", "what does", "features", "explain", "tell me about"
+    ]
+
+    if any(k in text for k in pricing):
+        return ("pricing", 0.95)
+
+    if any(k in text for k in lead):
+        return ("lead", 0.95)
+
+    if any(k in text for k in info):
+        return ("info", 0.80)
+
+    return ("chat", 0.0)
+
+
+def is_pricing_question(text: str) -> bool:
     text = text.lower()
 
     keywords = [
@@ -36,7 +33,7 @@ def is_product_question(text: str) -> bool:
         "price",
         "plans",
         "subscription",
-        "subscribe"
+        "subscribe",
         "pro plan",
         "cost",
         "features"

@@ -6,7 +6,7 @@ def llm_extract_fields(text:str)-> dict:
     """
     Uses LLM to extract structured fields.
     returns a dict with possible keys:
-    first_name, last_name, email, platform
+    first_name, last_name, email, platform, plan
     """
 
     system = SystemMessage(
@@ -39,6 +39,33 @@ def llm_extract_fields(text:str)-> dict:
     response = llm.invoke([system, human])
 
     try:
-        return json.loads(response.content)
+        raw = json.loads(response.content)
+
+        return {
+            "first_name": clean_field(raw.get("first_name")),
+            "last_name": clean_field(raw.get("last_name")),
+            "email": clean_field(raw.get("email")),
+            "platform": clean_field(raw.get("platform"), VALID_PLATFORMS),
+            "plan": clean_field(raw.get("plan"), VALID_PLANS),
+        }
     except Exception:
         return {}
+
+    
+VALID_PLANS = {"basic", "pro", "enterprise"}
+VALID_PLATFORMS = {"youtube", "instagram", "shorts"}
+
+def clean_field(value, valid_set=None):
+    if not value:
+        return None
+
+    v = str(value).strip().lower()
+
+    # Reject vague or hallucinated phrases
+    if any(bad in v for bad in ["not provided", "unknown", "n/a", "none", "null", "pricing"]):
+        return None
+
+    if valid_set and v not in valid_set:
+        return None
+
+    return v.capitalize() if not valid_set else v.capitalize()

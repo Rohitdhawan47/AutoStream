@@ -1,6 +1,7 @@
 import json
 from datetime import datetime, timezone
 
+
 def mock_lead_capture(name, email, platform, plan):
     lead = {
         "name": name,

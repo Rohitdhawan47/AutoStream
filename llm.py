@@ -1,9 +1,14 @@
-from langchain_google_genai import ChatGoogleGenerativeAI
+import os
+from langchain_ollama import ChatOllama
 
-llm = ChatGoogleGenerativeAI(
-    model = "gemini-2.5-flash",
-    temperature=0.3
+OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434")
+
+llm = ChatOllama(
+    model="mistral:7b",
+    temperature=0.3,
+    base_url=OLLAMA_URL
 )
+
 # import google.generativeai as genai
 # import os
 
