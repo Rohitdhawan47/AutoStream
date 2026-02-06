@@ -1,12 +1,12 @@
 from langchain_core.messages import SystemMessage, AIMessage, HumanMessage
-from state import Agentstate
+from state import AgentState
 from llm import llm
 from rag.retriever import retrieve_context
 from debug import trace_node
 
 RAG_CACHE = {}
 
-def rag_reply_node(state: Agentstate, vector_store) -> Agentstate:
+def rag_reply_node(state: AgentState, vector_store) -> AgentState:
     trace_node(state, "rag_reply")
 
     last_message = state["messages"][-1]

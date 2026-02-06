@@ -40,3 +40,14 @@ def is_pricing_question(text: str) -> bool:
     ]
 
     return any(k in text for k in keywords)
+
+import re
+
+BUY_PATTERN = re.compile(
+    r"\b(i\s*(will|want|choose|go)\s*with\s*(basic|pro|enterprise)\s*plan)\b",
+    re.IGNORECASE
+)
+
+def wants_to_buy(text: str) -> bool:
+    return bool(BUY_PATTERN.search(text))
+
