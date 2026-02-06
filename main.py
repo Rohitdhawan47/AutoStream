@@ -40,44 +40,6 @@
 
 # if __name__ == "__main__":
 #     main()
-# from graph import build_graph
-# from session import SessionUser
-# from state import AgentState
-# from langchain_core.messages import HumanMessage
-# from nodes.greeting import greetingnode
-# from rag.vector_store import build_vector_store
-
-# def main():
-#     state: AgentState = {
-#         "messages": [],
-#         "session_user": SessionUser(),
-#         "vector_store": build_vector_store()
-#     }
-
-#     print("AutoStream Assistant is running. Type 'exit' to quit.\n")
-
-#     # Greeting
-#     state = greetingnode(state)
-#     print(f"Agent: {state['messages'][-1].content}\n")
-
-#     graph = build_graph()
-
-#     while True:
-#         user_input = input("User: ").strip()
-
-#         if user_input.lower() in ["exit", "quit"]:
-#             print("Session ended.")
-#             break
-
-#         state["messages"].append(HumanMessage(content=user_input))
-
-#         state = graph.invoke(state)
-
-#         last_message = state["messages"][-1]
-#         print(f"Agent: {last_message.content}\n")
-
-# if __name__ == "__main__":
-#     main()
 
 from graph import build_graph
 from session import SessionUser
