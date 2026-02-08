@@ -1,23 +1,6 @@
 from langchain_core.messages import HumanMessage
 from logic.intent_engine import decide_intent
 from debug import trace_node
-
-# def intent_node(state):
-#     trace_node(state, "intent_node")
-
-#     last = state["messages"][-1]
-
-#     if not isinstance(last, HumanMessage):
-#         return state
-
-#     intent = decide_intent(last.content, state["session_user"])
-
-#     print("INTENT →", intent, "TYPE:", type(intent))
-
-#     # 🚨 ROUTERS MUST ONLY GET STRINGS
-#     state["route"] = intent
-
-#     return state
 def intent_node(state):
     trace_node(state, "intent_node")
 

@@ -3,14 +3,15 @@ from session import SessionUser
 from state import Agentstate
 from langchain_core.messages import HumanMessage
 from nodes.greeting import greetingnode
-from debug import dump_messages
+# from debug import dump_messages
+
 
 def main():
     session_user = SessionUser()
 
     state: Agentstate = {
         "messages": [],
-        "trace": [],
+        "trace": [], # for debugging
         "session_user": session_user
 
     }
@@ -32,7 +33,7 @@ def main():
         state["messages"].append(HumanMessage(content=user_input))
 
         state = graph.invoke(state)
-        print("TRACE:", "->".join(state.get("trace", [])))
+        # print("TRACE:", "->".join(state.get("trace", [])))  remove comments to see the flow of graph
 
         last_message = state["messages"][-1]
         print(f"Agent: {last_message.content}\n")

@@ -2,11 +2,14 @@ def detect_intent(text: str):
     text = text.lower()
 
     pricing = [
-        "price", "pricing", "plans", "subscription", "cost", "upgrade"
+        "price", "pricing", "plans", "subscription", "cost", "upgrade",
+        "subscribe",
+        "cost",
+        "features"
     ]
 
     lead = [
-        "buy", "trial", "sign up", "signup", "contact sales", "purchase", "interested"
+        "buy", "trial", "sign up", "signup", "contact sales", "purchase", "interested", "go with"
     ]
 
     info = [
@@ -23,20 +26,3 @@ def detect_intent(text: str):
         return ("info", 0.80)
 
     return ("chat", 0.0)
-
-
-def is_pricing_question(text: str) -> bool:
-    text = text.lower()
-
-    keywords = [
-        "pricing",
-        "price",
-        "plans",
-        "subscription",
-        "subscribe",
-        "pro plan",
-        "cost",
-        "features"
-    ]
-
-    return any(k in text for k in keywords)

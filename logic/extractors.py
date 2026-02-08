@@ -7,26 +7,40 @@ STOPWORDS = {
 }
 
 # ---------- NAME ----------
-import re
 
-def extract_name(text: str):
+
+from typing import Optional, Tuple
+
+def extract_name(text: str) -> Optional[Tuple[str, str]]:
+    """
+    Extracts FIRST and LAST name ONLY when user explicitly says:
+    - my name is FIRST LAST
+    - i am FIRST LAST
+    - i'm FIRST LAST
+    - this is FIRST LAST
+    """
+
     t = text.strip()
 
-    # Full sentence patterns
-    patterns = [
-        r"(?:my name is|i am|i'm|this is)\s+([A-Za-z]+)(?:\s+([A-Za-z]+))?",
-    ]
+    pattern = r"""
+        \b(?:my\s+name\s+is|i\s+am|i'm|this\s+is)\b
+        \s+
+        ([A-Za-z]{2,20})
+        \s+
+        ([A-Za-z]{2,20})
+        \b
+    """
 
-    for p in patterns:
-        m = re.search(p, t, re.IGNORECASE)
-        if m:
-            return [m.group(1), m.group(2)] if m.group(2) else [m.group(1)]
+    match = re.search(pattern, t, re.IGNORECASE | re.VERBOSE)
+    if not match:
+        return None
 
-    # Bare name fallback (single word, alphabetic, reasonable length)
-    if re.fullmatch(r"[A-Za-z]{2,20}", t):
-        return [t]
+    first_name = match.group(1).capitalize()
+    last_name = match.group(2).capitalize()
 
-    return None
+    return first_name, last_name
+
+
 
 # ---------- EMAIL ----------
 def is_email(text: str) -> str | None:

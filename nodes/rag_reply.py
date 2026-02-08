@@ -25,8 +25,8 @@ def rag_reply_node(state: Agentstate, vector_store) -> Agentstate:
     # Hard stop only if NOTHING was retrieved
     if not context.strip():
         answer = (
-            "I don’t have that information yet. "
-            "I can help with AutoStream’s pricing, plans, or features."
+            "I don't have that information yet. "
+            "I can help with AutoStream's pricing, plans, or features."
         )
         RAG_CACHE[question] = answer
         state["messages"].append(AIMessage(content=answer))

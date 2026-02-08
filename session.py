@@ -7,6 +7,7 @@ class SessionUser:
         self.mode = "chat"
         self.lead_submitted = False
         self.plan = None
+        self.awaiting = None
     
     def is_complete(self)->bool:
         return (
