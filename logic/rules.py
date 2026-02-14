@@ -1,53 +1,32 @@
-def detect_intent(text: str):
-    text = text.lower()
-
-    pricing = [
-        "price", "pricing", "plans", "subscription", "cost", "upgrade"
-    ]
-
-    lead = [
-        "buy", "trial", "sign up", "signup", "contact sales", "purchase", "interested"
-    ]
-
-    info = [
-        "what is", "what does", "features", "explain", "tell me about"
-    ]
-
-    if any(k in text for k in pricing):
-        return ("pricing", 0.95)
-
-    if any(k in text for k in lead):
-        return ("lead", 0.95)
-
-    if any(k in text for k in info):
-        return ("info", 0.80)
-
-    return ("chat", 0.0)
-
-
-def is_pricing_question(text: str) -> bool:
-    text = text.lower()
-
-    keywords = [
-        "pricing",
-        "price",
-        "plans",
-        "subscription",
-        "subscribe",
-        "pro plan",
-        "cost",
-        "features"
-    ]
-
-    return any(k in text for k in keywords)
-
-import re
-
+import regex as re
 BUY_PATTERN = re.compile(
-    r"\b(i\s*(will|want|choose|go)\s*with\s*(basic|pro|enterprise)\s*plan)\b",
+    r"\b(i\s*(will|want|choose)?\s*(go\s*)?with\s*(the\s*)?(basic|pro|enterprise)\s*plan)\b",
     re.IGNORECASE
 )
 
 def wants_to_buy(text: str) -> bool:
     return bool(BUY_PATTERN.search(text))
 
+QUESTION_START = (
+    "what", "why", "how", "when", "where",
+    "which", "can you", "could", "do", "does",
+    "is", "are", "should", "would"
+)
+
+def contains_question(text: str) -> bool:
+    t = text.strip().lower()
+
+    if "?" in t:
+        return True
+
+    return any(t.startswith(q + " ") for q in QUESTION_START)
+
+def contains_user_identity(text: str) -> bool:
+    t = text.lower()
+    return any([
+        "my name is" in t,
+        "i am " in t,
+        "email is" in t,
+        "@" in t,
+        "you can call me" in t
+    ])

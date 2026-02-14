@@ -23,12 +23,14 @@ def llm_extract_fields(text:str)-> dict:
             "If a field is not present, use null.\n\n"
             "Example:\n"
             "{\n"
-            '  "first_name": "Rohit",\n'
+            '  "first_name": "Modi",\n'
             '  "last_name": null,\n'
             '  "email": null,\n'
             '  "platform": "YouTube,"\n'
             '  "plan": "pro"'
             "}"
+            """Rules:
+            - don't take I, we as first name """
 
 
         )

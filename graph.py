@@ -124,16 +124,21 @@ from state import AgentState
 from nodes.rule_processor import rule_processor_node
 from nodes.intent_decision import intent_node
 from nodes.llm_reply import llm_reply_node
+from rag.vector_store import build_vector_store
 
 def build_graph():
     graph = StateGraph(AgentState)
-
+    vector_store = build_vector_store()
     # --------------------
     # Nodes
     # --------------------
     graph.add_node("rule_processor", rule_processor_node)
     graph.add_node("intent", intent_node)
-    graph.add_node("llm_reply", llm_reply_node)
+    graph.add_node(
+    "llm_reply",
+    lambda s: llm_reply_node(s, vector_store)
+)
+
 
     # --------------------
     # Entry point

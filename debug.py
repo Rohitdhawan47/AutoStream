@@ -1,3 +1,4 @@
+# Exists only for debugging remove comments in nodes to see the flow
 def trace_node(state, name):
     state["trace"]= [*state.get("trace", []), str(name)]
 

@@ -1,2 +1,18 @@
-langgraph
+# Core LLM & LangChain
 langchain
+langchain-core
+langgraph
+
+# Vector search (RAG)
+faiss-cpu
+
+# Local LLM runtime
+ollama
+
+# Utilities
+pydantic
+typing-extensions
+regex
+
+# Optional but recommended
+python-dotenv

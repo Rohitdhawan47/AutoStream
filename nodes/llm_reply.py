@@ -1,223 +1,122 @@
-# from langchain_core.messages import AIMessage, SystemMessage
-# from state import Agentstate
-# from logic.lead_qualifier import mock_lead_capture
-# from debug import trace_node
-# from llm import llm
-# from knowledge_base.product import PRODUCT_SEED
-
-
-# def llm_reply_node(state: Agentstate) -> Agentstate:
-#     session_user = state["session_user"]
-#     trace_node(state, "llm_reply")
-
-
-#     # 1️⃣ Lead COMPLETE → Capture once and confirm
-#     if (
-#         session_user.mode == "lead"
-#         and session_user.is_complete()
-#         and not session_user.lead_submitted
-#     ):
-#         mock_lead_capture(
-#             name=f"{session_user.first_name} {session_user.last_name or ''}".strip(),
-#             email=session_user.email,
-#             platform=session_user.platform,
-#             plan=session_user.plan
-#         )
-#         session_user.lead_submitted = True
-
-#         state["messages"].append(
-#             AIMessage(content="Thanks! Your details are saved. Our team will reach out shortly.")
-#         )
-#         return state
-
-#     # 2️⃣ Lead INCOMPLETE → Ask for missing fields
-#     context = None
-
-#     if session_user.mode == "lead":
-#         if not session_user.email:
-#             context = (
-#                 f"The user's name is {session_user.first_name or 'there'}.\n"
-#                 "Ask them for their email."
-#             )
-#         elif not session_user.platform:
-#             context = (
-#                 "The user's email is already collected.\n"
-#                 "Ask which platform they create content for "
-#                 "(YouTube, Instagram, or Shorts)."
-#             )
-#         elif not session_user.plan:
-#             context = (
-#                 "Ask which plan they are interested in "
-#                 "(Basic, Pro, or Enterprise)."
-#             )
-
-#     # 3️⃣ INFO MODE → Product seed grounded answer
-#     if session_user.mode == "info":
-#         system_message = SystemMessage(
-#             content=(
-#                 "You are AutoStream's assistant.\n"
-#                 f"{PRODUCT_SEED}\n\n"
-#                 "- Answer only from the product information above.\n"
-#                 "- Do NOT invent features, pricing, or policies.\n"
-#                 "- Keep the answer under 2 sentences.\n"
-#             )
-#         )
-
-#         messages = [system_message] + state["messages"][-3:]
-#         response = llm.invoke(messages)
-
-#         if response.content.strip():
-#             state["messages"].append(AIMessage(content=response.content))
-#         return state
-
-#     # 4️⃣ CHAT MODE OR NO CONTEXT → Normal LLM reply
-#     if not context:
-#         response = llm.invoke(state["messages"])
-#         if response.content.strip():
-#             state["messages"].append(AIMessage(content=response.content))
-#         return state
-
-#     # 5️⃣ Lead question via controlled system prompt
-#     system_message = SystemMessage(
-#         content=(
-#             "You are AutoStream's assistant.\n"
-#             f"{PRODUCT_SEED}\n\n"
-#             "- Ask only ONE question.\n"
-#             "- Do NOT invent features, pricing, URLs, or policies.\n"
-#             "- Keep the response under 1 sentence.\n\n"
-#             f"{context}"
-#         )
-#     )
-
-#     messages = [system_message] + state["messages"][-3:]
-#     response = llm.invoke(messages)
-
-#     if response.content.strip():
-#         state["messages"].append(AIMessage(content=response.content))
-#     return state
-# from langchain_core.messages import AIMessage, SystemMessage
-# from state import AgentState
-# from logic.lead_qualifier import mock_lead_capture
-# from debug import trace_node
-# from llm import llm
-# from knowledge_base.product import PRODUCT_SEED
-
-
-# def llm_reply_node(state: AgentState) -> AgentState:
-#     session_user = state["session_user"]
-#     trace_node(state, "llm_reply")
-#     print("LLM MODE CHECK:", session_user.mode)
-#     # -------------------------------
-#     # 1️⃣ LEAD MODE (HARD PRIORITY)
-#     # -------------------------------
-#     if session_user.mode == "lead":
-#         # Lead COMPLETE → Capture once
-#         if session_user.is_complete() and not session_user.lead_submitted:
-#             mock_lead_capture(
-#                 name=f"{session_user.first_name} {session_user.last_name or ''}".strip(),
-#                 email=session_user.email,
-#                 platform=session_user.platform,
-#                 plan=session_user.plan
-#             )
-#             session_user.lead_submitted = True
-
-#             state["messages"].append(
-#                 AIMessage(content="Thanks! Your details are saved. Our team will reach out shortly.")
-#             )
-#             return state
-
-#     # Ask in BUSINESS-OPTIMAL ORDER
-#         if not session_user.email:
-#             question = "What’s the best email to send your AutoStream plan details to?"
-#         elif not session_user.platform:
-#             question = "Which platform do you create content for? (YouTube, Instagram, or Shorts)"
-#         elif not session_user.plan:
-#             question = "Which plan are you interested in? (Basic, Pro, or Enterprise)"
-#         elif not session_user.first_name:
-#             question = "By the way, what should I call you?"
-#         else:
-#             question = "Almost done — is there anything else you'd like to know?"
-
-#         state["messages"].append(AIMessage(content=question))
-#         return state
-
-#     # -------------------------------
-#     # 2️⃣ INFO MODE (PRODUCT ONLY)
-#     # -------------------------------
-#     if session_user.mode == "info":
-#         system_message = SystemMessage(
-#             content=(
-#                 "You are AutoStream's assistant.\n\n"
-#                 f"{PRODUCT_SEED}\n\n"
-#                 "Rules:\n"
-#                 "- Answer ONLY using the product info above\n"
-#                 "- Do NOT invent features, pricing, URLs, or policies\n"
-#                 "- Keep answers under 2 sentences\n"
-#                 "- If the answer is missing, say you don’t know\n"
-#             )
-#         )
-
-#         messages = [system_message] + state["messages"][-3:]
-#         response = llm.invoke(messages)
-
-#         if response.content.strip():
-#             state["messages"].append(AIMessage(content=response.content))
-
-#         return state
-
-#     # -------------------------------
-#     # 3️⃣ CHAT MODE (FREE LLM)
-#     # -------------------------------
-#     system_message = SystemMessage(
-#         content=(
-#             f"You are a friendly SaaS assistant for AutoStream which is {PRODUCT_SEED}\n"
-            
-#             "Keep responses short, helpful, and conversational.\n"
-#         )
-#     )
-
-#     messages = [system_message] + state["messages"][-5:]
-#     response = llm.invoke(messages)
-
-#     if response.content.strip():
-#         state["messages"].append(AIMessage(content=response.content))
-
-#     return state
-
 from langchain_core.messages import AIMessage, SystemMessage, HumanMessage
 from knowledge_base.product import PRODUCT_SEED
 from rag.retriever import retrieve_context
 from logic.lead_qualifier import mock_lead_capture
-from logic.rules import wants_to_buy
+from logic.rules import wants_to_buy, contains_question
 from debug import trace_node
 from llm import llm
 
 
-def llm_reply_node(state):
-    trace_node(state, "llm_reply")
+def llm_reply_node(state, vector_store):
+# For Debugging
+#     trace_node(state, "llm_reply")
+#     print(
+#     "[LLM_REPLY] sees slot_filled_this_turn =",
+#     state.get("slot_filled_this_turn")
+# )
+
 
     session_user = state["session_user"]
     last = state["messages"][-1]
 
     if not isinstance(last, HumanMessage):
+        print("[LLM_REPLY] Last message is not HumanMessage → returning state")
         return state
 
     text = last.content.strip()
+    
+    # For Debugging
+    # print("\n[LLM_REPLY] ================= TURN START =================")
+    # print("[INPUT TEXT]:", text)
+    # print("[SESSION BEFORE]:", session_user.to_dict())
 
-    # -------------------------------
-    # 1️⃣ Detect explicit buy signal
-    # -------------------------------
+    # --------------------------------------------------
+    # 1️⃣ Detect explicit buy signal (STRICT)
+    # --------------------------------------------------
     if wants_to_buy(text):
         session_user.wants_to_buy = True
+        print("[BUY SIGNAL] Explicit buy detected → wants_to_buy = True")
 
-    # -------------------------------
-    # 2️⃣ Answer user question
-    # -------------------------------
-    wants_info = state.get("wants_info", False)
-    wants_pricing = state.get("wants_pricing", False)
+    slot_filled = state.get("slot_filled_this_turn", False)
+    asked_question = (
+    contains_question(text)
+    or (
+        not slot_filled
+        and (session_user.wants_info or session_user.wants_pricing)
+    )
+)
 
-    if wants_pricing:
-        context = retrieve_context(state["vector_store"], text)
+    print("[FLAGS] slot_filled:", slot_filled,
+          "| asked_question:", asked_question,
+          "| wants_info:", session_user.wants_info,
+          "| wants_pricing:", session_user.wants_pricing,
+          "| wants_to_buy:", session_user.wants_to_buy)
+
+    # --------------------------------------------------
+    # 2️⃣ HARD CLOSE (ONLY when valid)
+    # --------------------------------------------------
+    if session_user.wants_to_buy and session_user.is_complete():
+        # print("[HARD CLOSE] Conditions met")
+
+        if not session_user.lead_submitted:
+            # print("[LEAD CAPTURE] Submitting lead")
+            mock_lead_capture(
+                name=f"{session_user.first_name or ''} {session_user.last_name or ''}".strip(),
+                email=session_user.email,
+                platform=session_user.platform,
+                plan=session_user.plan
+            )
+            session_user.lead_submitted = True
+
+        return _say(
+            state,
+            "You're all set! I've sent your details to our team — they'll reach out shortly,\n " 
+            "Type exit if you want to end the conversation. "
+        )
+
+    if session_user.lead_submitted:
+        # print("[LEAD COMPLETE] Already submitted → stopping")
+        return state
+
+    # --------------------------------------------------
+    # 3️⃣ SLOT-ONLY TURN (NO QUESTION)
+    # --------------------------------------------------
+    follow_up = _next_missing_slot(session_user)
+    # print("[NEXT SLOT]:", follow_up)
+
+    if slot_filled and not asked_question:
+        # print("[SLOT ONLY TURN] No question asked")
+
+        if follow_up:
+            # print("[ASK NEXT SLOT]")
+            return _say(state, follow_up)
+
+        if session_user.is_complete() and not session_user.wants_to_buy:
+            # print("[ALL SLOTS DONE] Showing soft CTA")
+            return _say(
+                state,
+                "If you'd like to move forward, just say:\n"
+                "*I'll go with the Pro plan* (or Basic / Enterprise)."
+            )
+
+        # print("[NO RESPONSE NEEDED] Ending turn")
+        return state
+
+    # --------------------------------------------------
+    # 4️⃣ QUESTION ANSWERING (ONLY IF QUESTION EXISTS)
+    # --------------------------------------------------
+    if not asked_question:
+        # print("[NO QUESTION] Nothing to answer → returning state")
+        return state
+
+    # print("[QUESTION DETECTED] Answering question")
+    answer = ""
+
+    if session_user.wants_pricing:
+        # print("[ANSWER MODE] Pricing")
+
+        context = retrieve_context(vector_store, text)
+        # print("[RAG CONTEXT FOUND]:", bool(context.strip()))
 
         if context.strip():
             system = SystemMessage(
@@ -228,11 +127,15 @@ def llm_reply_node(state):
                     f"Context:\n{context}"
                 )
             )
-            answer = llm.invoke([system, HumanMessage(content=text)]).content.strip()
+            answer = llm.invoke(
+                [system, HumanMessage(content=text)]
+            ).content.strip()
         else:
             answer = "We offer Basic, Pro, and Enterprise plans."
 
-    elif wants_info:
+    elif session_user.wants_info:
+        # print("[ANSWER MODE] Info")
+
         system = SystemMessage(
             content=(
                 "You are AutoStream's assistant.\n"
@@ -241,48 +144,50 @@ def llm_reply_node(state):
                 "- Do NOT invent features or pricing\n"
             )
         )
-        answer = llm.invoke([system, HumanMessage(content=text)]).content.strip()
+        answer = llm.invoke(
+            [system, HumanMessage(content=text)]
+        ).content.strip()
 
     else:
+        # print("[ANSWER MODE] Chat")
         answer = llm.invoke(state["messages"]).content.strip()
 
-    # -------------------------------
-    # 3️⃣ ONE aggressive follow-up
-    # -------------------------------
-    follow_up = None
-
-    if not session_user.first_name:
-        follow_up = "By the way, what should I call you?"
-    elif not session_user.platform:
-        follow_up = "Which platform do you mainly create for? (YouTube, Instagram, or Shorts)"
-    elif not session_user.plan:
-        follow_up = "Which plan are you considering? (Basic, Pro, or Enterprise)"
-    elif not session_user.email:
-        follow_up = "What's the best email to send your AutoStream plan details to?"
-
-    # -------------------------------
-    # 4️⃣ Close deal ONLY if allowed
-    # -------------------------------
-    if session_user.wants_to_buy and session_user.is_complete():
-        if not session_user.lead_submitted:
-            mock_lead_capture(
-                name=f"{session_user.first_name} {session_user.last_name or ''}".strip(),
-                email=session_user.email,
-                platform=session_user.platform,
-                plan=session_user.plan
-            )
-            session_user.lead_submitted = True
-
-        answer = "You're all set! I've sent your details to our team — they'll reach out shortly."
-        return _say(state, answer)
-
-    # Append follow-up if any
+    # Append follow-up slot question if any
     if follow_up:
         answer = f"{answer}\n\n{follow_up}"
+
+    # print("[FINAL ANSWER]:", answer)
+    # print("[SESSION AFTER]:", session_user.to_dict())
+    # print("[LLM_REPLY] ================= TURN END =================\n")
 
     return _say(state, answer)
 
 
+# ---------------- HELPERS ---------------- #
+
+def _next_missing_slot(session_user):
+    if not session_user.platform:
+        session_user.awaiting_slot = "platform"
+        return "Which platform do you mainly create for? (YouTube, Instagram, or Shorts)"
+    if not session_user.plan:
+        session_user.awaiting_slot = "plan"
+        return "Which plan are you considering? (Basic, Pro, or Enterprise)"
+    if not session_user.email:
+        session_user.awaiting_slot = "email"
+        return "What's the best email to send your AutoStream plan details to?"
+    if not session_user.first_name:
+        session_user.awaiting_slot = "name"
+        return (
+            "By the way, what should I call you?\n"
+            "👉 Type: *my name is First Last* (or *N/A* for last name)"
+        )
+
+    session_user.awaiting_slot = None
+    return None
+
+
 def _say(state, text):
-    state["messages"].append(AIMessage(content=text))
+    if text and text.strip():
+        state["messages"].append(AIMessage(content=text))
     return state
+

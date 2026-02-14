@@ -7,7 +7,6 @@ STOPWORDS = {
 }
 
 # ---------- NAME ----------
-import re
 
 def extract_name(text: str):
     t = text.strip()
