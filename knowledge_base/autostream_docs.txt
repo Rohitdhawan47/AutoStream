@@ -4,14 +4,15 @@ Free Plan:
 - Limited exports
 - Watermark added
 
-Pro Plan:
-- Unlimited exports
+Basic Plan:
+- 10 videos/month
 - No watermark
-- Advanced AI editing tools
+- 720p  resolution
 - Price: $29/month
 
 Enterprise Plan:
-- Custom workflows
+- Unlimited videos
 - API access
-- Dedicated support
-- Price: Contact Sales
+- AI captions
+- 4k resolution
+- Price: $79/month
