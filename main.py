@@ -44,7 +44,7 @@ def main():
         state = graph.invoke(state)
 
         # Debug path
-        print("TRACE:", " -> ".join(state["trace"]))
+        # print("TRACE:", " -> ".join(state["trace"]))
 
         # Last assistant reply
         last_message = state["messages"][-1]

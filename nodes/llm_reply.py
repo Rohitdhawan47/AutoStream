@@ -9,7 +9,7 @@ from llm import llm
 
 def llm_reply_node(state, vector_store):
 # For Debugging
-#     trace_node(state, "llm_reply")
+    trace_node(state, "llm_reply")
 #     print(
 #     "[LLM_REPLY] sees slot_filled_this_turn =",
 #     state.get("slot_filled_this_turn")

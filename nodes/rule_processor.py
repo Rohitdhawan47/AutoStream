@@ -10,7 +10,7 @@ MIN_LLM_FALLBACK_CHARS = 20
 def rule_processor_node(state: AgentState) -> AgentState:
     session_user = state["session_user"]
     trace_node(state, "rule_processor")
-    print("[RULE_PROCESSOR] slot flag BEFORE:", state.get("slot_filled_this_turn"))
+    # print("[RULE_PROCESSOR] slot flag BEFORE:", state.get("slot_filled_this_turn"))
 
 
     last_message = state["messages"][-1]
@@ -119,9 +119,9 @@ def rule_processor_node(state: AgentState) -> AgentState:
             state["slot_filled_this_turn"] = True
             print("extracted plan using llm fallback")
 
-        if llm_data:
-            print("LLM FALLBACK USED:", llm_data)
-    print("[RULE_PROCESSOR] slot flag AFTER:", state.get("slot_filled_this_turn"))
+    #     if llm_data:
+    #         print("LLM FALLBACK USED:", llm_data)
+    # print("[RULE_PROCESSOR] slot flag AFTER:", state.get("slot_filled_this_turn"))
 
 
     return state

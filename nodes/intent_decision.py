@@ -3,7 +3,7 @@ from logic.llm_intent import classify_intent
 from debug import trace_node
 
 def intent_node(state):
-    # trace_node(state, "intent_decision")
+    trace_node(state, "intent_decision")
 
     last = state["messages"][-1]
     if not isinstance(last, HumanMessage):
