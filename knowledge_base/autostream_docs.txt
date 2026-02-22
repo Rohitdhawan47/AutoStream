@@ -10,7 +10,7 @@ Basic Plan:
 - 720p  resolution
 - Price: $29/month
 
-Enterprise Plan:
+Pro Plan:
 - Unlimited videos
 - API access
 - AI captions
