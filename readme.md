@@ -302,6 +302,66 @@ This project demonstrates:
 
 * This is not a demo chatbot — it is a system.
 
+### 📲 WhatsApp Deployment (Webhook Integration)
+
+This assistant can be integrated with WhatsApp using a webhook-based architecture (e.g., Meta WhatsApp Cloud API or Twilio WhatsApp API).
+
+## 🔁 Deployment Flow
+```
+User (WhatsApp)
+      ↓
+WhatsApp Cloud API
+      ↓
+Webhook (FastAPI backend)
+      ↓
+LangGraph Agent (rule_processor → intent → llm_reply)
+      ↓
+Response returned to WhatsApp API
+      ↓
+Message delivered to user
+```
+
+## ⚙️ Implementation Approach
+
+# 1. Expose a Webhook Endpoint
+
+  * Build a FastAPI server:
+```
+    @app.post("/webhook")
+    async def receive_message(request: Request):
+        data = await request.json()
+        user_text = extract_whatsapp_message(data)
+
+        state["messages"].append(HumanMessage(content=user_text))
+        state = graph.invoke(state)
+
+        reply = state["messages"][-1].content
+        send_whatsapp_reply(reply)
+```
+
+# 2. Session Mapping
+
+  * Use the WhatsApp phone number as the session key.
+
+  * Store SessionUser objects in a dictionary or database:
+
+```sessions[phone_number] = SessionUser()```
+
+
+# 3. Preserve State
+
+  * Each WhatsApp user maintains their own SessionUser.
+
+  * This keeps slot filling and lead tracking persistent.
+
+# 4. Production Considerations
+
+  * Store session data in Redis or a database (not memory)
+
+  * Add request verification (Meta webhook signature validation)
+
+  * Deploy using Docker + cloud VM or container service
+
 ## 🏁 Final Note
 
 LLMs are powerful, but unreliable without structure.

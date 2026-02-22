@@ -96,7 +96,7 @@ def llm_reply_node(state, vector_store):
             return _say(
                 state,
                 "If you'd like to move forward, just say:\n"
-                "*I'll go with the (Basic / Pro)*."
+                "*I'll go with the (Basic / Pro) Plan*."
             )
 
         # print("[NO RESPONSE NEEDED] Ending turn")
