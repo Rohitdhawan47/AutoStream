@@ -11,7 +11,7 @@ def intent_node(state):
 
     signals = classify_intent(last.content)
     session_user = state["session_user"]
-    print(f"this was passed from llm_intent: {signals}")
+    # print(f"this was passed from llm_intent: {signals}")
 
     # ✅ Persist signals where the system actually reads them
     session_user.wants_info = signals["wants_info"]

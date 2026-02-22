@@ -35,7 +35,7 @@ def llm_reply_node(state, vector_store):
     # --------------------------------------------------
     if wants_to_buy(text):
         session_user.wants_to_buy = True
-        print("[BUY SIGNAL] Explicit buy detected → wants_to_buy = True")
+        # print("[BUY SIGNAL] Explicit buy detected → wants_to_buy = True")
 
     slot_filled = state.get("slot_filled_this_turn", False)
     asked_question = (
@@ -46,11 +46,11 @@ def llm_reply_node(state, vector_store):
     )
 )
 
-    print("[FLAGS] slot_filled:", slot_filled,
-          "| asked_question:", asked_question,
-          "| wants_info:", session_user.wants_info,
-          "| wants_pricing:", session_user.wants_pricing,
-          "| wants_to_buy:", session_user.wants_to_buy)
+    # print("[FLAGS] slot_filled:", slot_filled,
+    #       "| asked_question:", asked_question,
+    #       "| wants_info:", session_user.wants_info,
+    #       "| wants_pricing:", session_user.wants_pricing,
+    #       "| wants_to_buy:", session_user.wants_to_buy)
 
     # --------------------------------------------------
     # 2️⃣ HARD CLOSE (ONLY when valid)
@@ -96,7 +96,7 @@ def llm_reply_node(state, vector_store):
             return _say(
                 state,
                 "If you'd like to move forward, just say:\n"
-                "*I'll go with the Pro plan* (or Basic / Enterprise)."
+                "*I'll go with the (Basic / Pro)*."
             )
 
         # print("[NO RESPONSE NEEDED] Ending turn")
@@ -131,7 +131,7 @@ def llm_reply_node(state, vector_store):
                 [system, HumanMessage(content=text)]
             ).content.strip()
         else:
-            answer = "We offer Basic, Pro, and Enterprise plans."
+            answer = "We offer Basic, Pro plans."
 
     elif session_user.wants_info:
         # print("[ANSWER MODE] Info")
@@ -171,7 +171,7 @@ def _next_missing_slot(session_user):
         return "Which platform do you mainly create for? (YouTube, Instagram, or Shorts)"
     if not session_user.plan:
         session_user.awaiting_slot = "plan"
-        return "Which plan are you considering? (Basic, Pro, or Enterprise)"
+        return "Which plan are you considering? (Basic, Pro)"
     if not session_user.email:
         session_user.awaiting_slot = "email"
         return "What's the best email to send your AutoStream plan details to?"
